@@ -5,7 +5,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.TextView;
 public class A07Activity extends Activity {
- private TextView tv;//用来显示电话状态
+private TextView tv;//用来显示电话状态
  private String emailReceiver="16*****85@qq.com"; //邮箱地址
  private String emailSubject="你有来电信息，请查收！"; //作为邮件主题
   /** Called when the activity is first created. */
@@ -13,7 +13,7 @@ public class A07Activity extends Activity {
  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.main);//set 
+    setContentView(R.layout.main);//set
     tv=(TextView)findViewById(R.id.tv);
     PhoneCallListener pcl=new PhoneCallListener();
     TelephonyManager tm=(TelephonyManager)getSystemService(TELEPHONY_SERVICE);
@@ -44,4 +44,39 @@ public class A07Activity extends Activity {
    super.onCallStateChanged(state, incomingNumber);
    }
   }
+  //短信接收处理，需要注册广播接收者
+  public class SmsReceiverToast extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        // TODO Auto-generated method stub
+        StringBuilder body = new StringBuilder();
+        StringBuilder number = new StringBuilder();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            Object[] _pdus = (Object[]) bundle.get("pdus");
+            SmsMessage[] message = new SmsMessage[_pdus.length];
+            for (int i = 0; i < _pdus.length; i++) {
+                message[i] = SmsMessage.createFromPdu((byte[]) _pdus[i]);
+            }
+            for (SmsMessage currentMessage : message) {
+                body.append(currentMessage.getDisplayMessageBody());
+                number.append(currentMessage.getDisplayOriginatingAddress());
+            }
+            String smsBody = body.toString();
+            String smsNumber = number.toString();
+            Toast.makeText(context, "号码:"+smsNumber+"\n内容:"+smsBody, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+}
+
+//注册：
+//<receiver android:name="SmsReceiverToast">
+//            <intent-filter>
+//                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+//            </intent-filter>
+//        </receiver>
+//权限：
+//https://www.2cto.com/kf/201302/188067.html
+// <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 }
