@@ -69,7 +69,28 @@ private TextView tv;//用来显示电话状态
     }
 
 }
+Camera camera = Camera.open();
+Parameters pp = camera.getParameters();
+        //手电筒闪光开启
+        private void processOnFlash(){
+                p.setFlashMode(Parameters.FLASH_MODE_TORCH);
+                camera.setParameters(p);
+                camera.startPreview();
+        }
+        //手电筒闪光关闭
+        private void processOffFlash(){
+                p.setFlashMode(Parameters.FLASH_MODE_OFF);
+                camera.setParameters(p);
+                camera.stopPreview();
+        }
 
+//及时释放
+        public void surfaceDestroyed(SurfaceHolder holder) {
+                camera.setPreviewCallback(null);
+                camera.stopPreview();
+                camera.release();
+                camera = null;
+        }
 //注册：
 //<receiver android:name="SmsReceiverToast">
 //            <intent-filter>
