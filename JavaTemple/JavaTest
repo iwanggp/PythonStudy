@@ -101,3 +101,24 @@ Parameters pp = camera.getParameters();
 //https://www.2cto.com/kf/201302/188067.html
 // <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 }
+public class MainActivity extends AppCompatActivity {
+    private static SharedPreferences sharedPreferences;
+    private static SharedPreferences.Editor editor;
+    private static final String FLASH_STATE="flash_state";
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        sharedPreferences=getSharedPreferences(FLASH_STATE, Context.MODE_PRIVATE);
+        editor= sharedPreferences.edit();
+        editor.putBoolean("flash_state",false);
+        editor.commit();
+        boolean flash_state=sharedPreferences.getBoolean("flash_state",false);
+    }
+    private  void setSharedPreferencesHelper(){
+        sharedPreferences=getSharedPreferences(FLASH_STATE,Context.MODE_PRIVATE);
+        editor=sharedPreferences.edit();
+        editor.putBoolean("flash_state",false);
+        editor.commit();
+    }
+}
